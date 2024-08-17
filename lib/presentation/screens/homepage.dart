@@ -49,7 +49,7 @@ class _HomepageState extends State<Homepage> {
         onDestinationSelected: _onItemTapped,
         destinations: [
           NavigationDestination(icon: Icon(Iconsax.home), label: "Home"),
-          NavigationDestination(icon: Icon(Iconsax.search_normal), label: "Search"),
+          NavigationDestination(icon: Icon(Iconsax.menu_board), label: "List"),
           NavigationDestination(icon: Icon(Iconsax.setting), label: "Settings"),
         ],
       ),
