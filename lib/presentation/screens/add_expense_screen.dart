@@ -5,7 +5,6 @@ import 'package:uuid/uuid.dart';
 import '../../data/models/expense_model.dart';
 import '../../domain/provider/expense_provider.dart';
 
-
 class AddExpenseScreen extends StatefulWidget {
   @override
   _AddExpenseScreenState createState() => _AddExpenseScreenState();
@@ -15,7 +14,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
-  DateTime? _selectedDate;
+  DateTime? _selectedDateTime;
   String? _selectedCategory;
 
   final List<String> _categories = [
@@ -29,7 +28,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void _submitData() {
     if (_amountController.text.isEmpty ||
         _descriptionController.text.isEmpty ||
-        _selectedDate == null ||
+        _selectedDateTime == null ||
         _selectedCategory == null) {
       return;
     }
@@ -43,7 +42,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       name: enteredName,
       description: enteredDescription,
       amount: enteredAmount,
-      date: _selectedDate!,
+      date: _selectedDateTime!,
       category: _selectedCategory!, // Include category
     );
 
@@ -60,9 +59,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
 
     if (pickedDate != null) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
+      final pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
     }
   }
 
@@ -95,15 +107,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    _selectedDate == null
-                        ? 'No Date Chosen!'
-                        : 'Picked Date: ${_selectedDate!.toLocal()}'.split(' ')[0],
+                    _selectedDateTime == null
+                        ? 'No Date and Time Chosen!'
+                        : 'Picked Date and Time: ${_selectedDateTime!.toLocal()}',
                   ),
                 ),
                 TextButton(
                   onPressed: _presentDatePicker,
                   child: Text(
-                    'Choose Date',
+                    'Choose Date & Time',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

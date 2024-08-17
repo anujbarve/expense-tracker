@@ -1,4 +1,5 @@
 import 'package:finance/presentation/screens/dashboard.dart';
+import 'package:finance/presentation/screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
@@ -19,7 +20,7 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> _screens = [
     Dashboard(), // Home Screen
     ExpenseListScreen(), // Search Screen (replace with actual screen)
-    Placeholder(),        // Settings Screen (replace with actual screen)
+    SettingsScreen(),        // Settings Screen (replace with actual screen)
   ];
 
   void _onItemTapped(int index) {

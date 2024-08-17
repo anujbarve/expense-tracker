@@ -17,7 +17,7 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
-  DateTime? _selectedDate;
+  DateTime? _selectedDateTime;
   String? _selectedCategory;
 
   final List<String> _categories = [
@@ -40,14 +40,14 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
     _nameController.text = expense.name;
     _descriptionController.text = expense.description;
     _amountController.text = expense.amount.toString();
-    _selectedDate = expense.date;
+    _selectedDateTime = expense.date;
     _selectedCategory = expense.category;
   }
 
   void _submitData() {
     if (_amountController.text.isEmpty ||
         _descriptionController.text.isEmpty ||
-        _selectedDate == null ||
+        _selectedDateTime == null ||
         _selectedCategory == null) {
       return;
     }
@@ -61,7 +61,7 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
       name: enteredName,
       description: enteredDescription,
       amount: enteredAmount,
-      date: _selectedDate!,
+      date: _selectedDateTime!,
       category: _selectedCategory!, // Include category
     );
 
@@ -73,15 +73,28 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
   void _presentDatePicker() async {
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: _selectedDateTime ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
 
     if (pickedDate != null) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
+      final pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
+      );
+
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
     }
   }
 
@@ -114,15 +127,15 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    _selectedDate == null
-                        ? 'No Date Chosen!'
-                        : 'Picked Date: ${_selectedDate!.toLocal()}'.split(' ')[0],
+                    _selectedDateTime == null
+                        ? 'No Date and Time Chosen!'
+                        : 'Picked Date and Time: ${_selectedDateTime!.toLocal()}',
                   ),
                 ),
                 TextButton(
                   onPressed: _presentDatePicker,
                   child: Text(
-                    'Choose Date',
+                    'Choose Date & Time',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class ExpenseTile extends StatefulWidget {
+class ExpenseTile extends StatelessWidget {
   final String name;
   final String description;
   final double amount;
@@ -19,75 +19,78 @@ class ExpenseTile extends StatefulWidget {
   });
 
   @override
-  _ExpenseTileState createState() => _ExpenseTileState();
-}
-
-class _ExpenseTileState extends State<ExpenseTile> {
-  bool _isExpanded = false;
-
-  @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _isExpanded = !_isExpanded;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        width: double.infinity,
-        height: _isExpanded ? height / 5 : height / 8,
-        decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF292B4D),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Date and Month Column
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.name,
-                    style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  const Spacer(),
-                  Text(
-                    widget.amount.toString(),
-                    style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              if (_isExpanded)
-                Expanded(
-                  child: AnimatedOpacity(
-                    opacity: _isExpanded ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 300),
-                    child: Text(
-                      widget.description,
-                      style: GoogleFonts.lato(fontSize: 14, color: Colors.black54),
+                    DateFormat('dd').format(date),
+                    style: GoogleFonts.lato(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                ),
-              const Spacer(),
-              Row(
-                children: [
-                  Text(widget.category),
-                  const Spacer(),
                   Text(
-                    DateFormat('yyyy-MM-dd – kk:mm').format(widget.date.toLocal()),
+                    DateFormat('MMM').format(date),
+                    style: GoogleFonts.lato(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+          const SizedBox(width: 16),
+          // Expense Details Column
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Amount
+                Text(
+                  '₹ ${amount.toStringAsFixed(2)}',
+                  style: GoogleFonts.lato(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Description
+                Text(
+                  description,
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
