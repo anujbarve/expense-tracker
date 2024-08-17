@@ -1,11 +1,12 @@
-import 'package:finance/provider/expense_provider.dart';
-import 'package:finance/screens/homepage.dart';
+import 'package:finance/presentation/screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
-import 'models/expense_model.dart';
+import 'data/models/expense_model.dart';
+import 'domain/provider/expense_provider.dart';
+
 
 
 void main() async {
@@ -28,10 +29,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Personal Finance Tracker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const Homepage(),

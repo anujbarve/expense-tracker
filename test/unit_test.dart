@@ -1,5 +1,5 @@
-import 'package:finance/models/expense_model.dart';
-import 'package:finance/provider/expense_provider.dart';
+import 'package:finance/data/models/expense_model.dart';
+import 'package:finance/domain/provider/expense_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:path/path.dart' as path;
@@ -30,7 +30,7 @@ void main() {
 
   test('Should add an expense to the provider', () async {
     final expenseProvider = ExpenseProvider();
-    final expense = Expense(id: '1', description: 'Test', amount: 100, date: DateTime.now());
+    final expense = Expense(id: '1', name: "Name",description: 'Test', amount: 100, date: DateTime.now(), category: '');
 
     expenseProvider.addExpense(expense);
 
