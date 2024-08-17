@@ -113,6 +113,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         ],
                       ),
                       child:  ExpenseTile(
+                        name: expense.name,
                         description: expense.description,
                         amount: expense.amount,
                         date: expense.date,
