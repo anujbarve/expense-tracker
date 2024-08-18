@@ -6,9 +6,9 @@ The Finance App is a Flutter mobile application designed to help you manage your
 
 | Feature                | Description                                      | GIF                                          |
 |------------------------|--------------------------------------------------|----------------------------------------------|
-| Expense Management     | Manage and view your expenses efficiently.      | ![Expense Management GIF](https://github.com/yourusername/yourrepo/blob/main/assets/expense_management.gif) |
-| Notifications          | Set up and manage local notifications.          | ![Notifications GIF](https://github.com/yourusername/yourrepo/blob/main/assets/notifications.gif) |
-| Custom Settings        | Configure app settings including categories and notifications. | ![Settings GIF](https://github.com/yourusername/yourrepo/blob/main/assets/settings.gif) |
+| Expense Management     | Manage and view your expenses efficiently.      | ![Expense Management GIF](https://github.com/anujbarve/expense-tracker/blob/master/outputs/add_new.gif) |
+| Notifications          | Set up and manage local notifications.          | ![Notifications GIF](https://github.com/anujbarve/expense-tracker/blob/master/outputs/sorting.gif) |
+| Custom Settings        | Configure app settings including categories and notifications. | ![Settings GIF](https://github.com/anujbarve/expense-tracker/blob/master/outputs/settings_n_ui.gif) |
 
 ## Features
 
