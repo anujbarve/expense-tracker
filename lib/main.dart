@@ -2,6 +2,7 @@ import 'package:finance/domain/provider/settings_provider.dart';
 import 'package:finance/presentation/constants/theme.dart';
 import 'package:finance/presentation/screens/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,17 @@ void main() async {
   Hive.registerAdapter(ExpenseAdapter());
   Hive.registerAdapter(AppSettingsAdapter());
   await Hive.openBox<Expense>('expenses');
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   runApp(MultiProvider(
     providers: [

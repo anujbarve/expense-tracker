@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../../data/models/settings_model.dart';
+import '../service/notification_service.dart';
 
 class SettingsProvider with ChangeNotifier {
   Box<AppSettings>? _settingsBox;
   AppSettings? _currentSettings;
+
+  TimeOfDay _notificationTime = TimeOfDay.now();
 
   SettingsProvider() {
     _loadSettings();
@@ -107,6 +110,16 @@ class SettingsProvider with ChangeNotifier {
       final updatedSettings = _currentSettings!.copyWith(language: value);
       await updateSettings(updatedSettings);
     }
+  }
+
+  TimeOfDay get notificationTime => _notificationTime;
+
+  final NotificationService _notificationService = NotificationService();
+
+  void setNotificationTime(TimeOfDay time) {
+    _notificationTime = time;
+    _notificationService.scheduleNotification(time); // Schedule the notification
+    notifyListeners();
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:finance/domain/provider/settings_provider.dart';
 import 'package:finance/presentation/screens/add_expense_category.dart';
+import 'package:finance/presentation/screens/notification_time.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -36,12 +37,18 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
             ),
-            _buildSettingsOption(
-              context,
-              Icons.notifications,
-              'Budget Alerts',
-              'Set alerts when nearing your budget limits',
-              () {},
+            GestureDetector(
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ChangeNotificationTimeScreen()));
+              },
+              child: _buildSettingsOption(
+                context,
+                Icons.notifications,
+                'Budget Alerts',
+                'Set alerts when nearing your budget limits',
+                () {},
+              ),
             ),
             _buildSettingsOption(
               context,
