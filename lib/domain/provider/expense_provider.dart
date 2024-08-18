@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../../data/models/expense_model.dart';
 
@@ -11,10 +13,10 @@ class ExpenseProvider with ChangeNotifier {
 
 
   ExpenseProvider() {
-    _initializeBox();
+    initializeBox();
   }
 
-  Future<void> _initializeBox() async {
+  Future<void> initializeBox() async {
     _expenseBox = await Hive.openBox<Expense>('expenses');
     _isInitialized = true;
     notifyListeners();
@@ -98,4 +100,52 @@ class ExpenseProvider with ChangeNotifier {
       print("Error updating expense: $e");
     }
   }
+
+  // Example method to get categories with their data
+  List<CategoryData> getExpenseCategoriesWithData() {
+    final Map<String, CategoryData> categoryMap = {};
+
+    for (final expense in expenses) {
+      if (categoryMap.containsKey(expense.category)) {
+        categoryMap[expense.category]!.transactions++;
+        categoryMap[expense.category]!.totalValue += expense.amount;
+      } else {
+        categoryMap[expense.category] = CategoryData(
+          icon: _getCategoryIcon(expense.category),
+          category: expense.category,
+          transactions: 1,
+          totalValue: expense.amount,
+        );
+      }
+    }
+
+    return categoryMap.values.toList();
+  }
+
+  IconData _getCategoryIcon(String category) {
+    // Map your categories to icons here
+    switch (category) {
+      case 'Food':
+        return Icons.food_bank_rounded;
+      case 'Wallet and Digital Payment':
+        return Iconsax.wallet_2;
+    // Add more cases for other categories
+      default:
+        return Icons.category; // Default icon
+    }
+  }
+}
+
+class CategoryData {
+  final IconData icon;
+  final String category;
+  int transactions;
+  double totalValue;
+
+  CategoryData({
+    required this.icon,
+    required this.category,
+    required this.transactions,
+    required this.totalValue,
+  });
 }

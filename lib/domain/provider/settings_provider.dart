@@ -15,8 +15,8 @@ class SettingsProvider with ChangeNotifier {
     _settingsBox = await Hive.openBox<AppSettings>('settingsBox');
     _currentSettings = _settingsBox?.get('settings', defaultValue: AppSettings(
       darkMode: false,
-      currency: 'USD',
-      expenseCategories: [],
+      currency: 'INR',
+      expenseCategories: ['Food', 'Transport', 'Entertainment', 'Health', 'Other'],
       budgetAlerts: true,
       notifications: true,
       privacyPolicy: 'Default Privacy Policy',
@@ -64,6 +64,20 @@ class SettingsProvider with ChangeNotifier {
     if (_currentSettings != null) {
       final updatedSettings = _currentSettings!.copyWith(expenseCategories: categories);
       await updateSettings(updatedSettings);
+    }
+  }
+
+  Future<void> addExpenseCategory(String category) async {
+    if (_currentSettings != null && !_currentSettings!.expenseCategories.contains(category)) {
+      final updatedCategories = List<String>.from(_currentSettings!.expenseCategories)..add(category);
+      await setExpenseCategories(updatedCategories);
+    }
+  }
+
+  Future<void> removeExpenseCategory(String category) async {
+    if (_currentSettings != null && _currentSettings!.expenseCategories.contains(category)) {
+      final updatedCategories = List<String>.from(_currentSettings!.expenseCategories)..remove(category);
+      await setExpenseCategories(updatedCategories);
     }
   }
 

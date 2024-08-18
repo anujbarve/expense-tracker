@@ -17,13 +17,29 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   String _sortOption = 'Amount'; // Default sort option
 
   @override
+  void initState() {
+    // TODO: implement initState
+    Provider.of<ExpenseProvider>(context, listen: false).initializeBox();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-
-
-
     return Consumer<ExpenseProvider>(
       builder: (BuildContext context, ExpenseProvider provider, Widget? child) {
+        if (provider.expenses.isEmpty) {
+          // Show a loading indicator while the expenses are being loaded
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Expense List'),
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
+        // Continue with your current UI once expenses are available
         List<Expense> expenses = provider.expenses;
 
         // Apply sorting
@@ -88,8 +104,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         motion: const ScrollMotion(),
                         children: [
                           SlidableAction(
-                            onPressed: (c){
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EditExpenseScreen(expenseId: expense.id)));
+                            onPressed: (c) {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => EditExpenseScreen(expenseId: expense.id)));
                             },
                             backgroundColor: Colors.blueAccent,
                             foregroundColor: Colors.white,
@@ -102,7 +119,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         motion: const ScrollMotion(),
                         children: [
                           SlidableAction(
-                            onPressed: (c){
+                            onPressed: (c) {
                               provider.deleteExpense(expense.id);
                             },
                             backgroundColor: Colors.redAccent,
@@ -112,7 +129,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           ),
                         ],
                       ),
-                      child:  ExpenseTile(
+                      child: ExpenseTile(
                         name: expense.name,
                         description: expense.description,
                         amount: expense.amount,
@@ -129,4 +146,5 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       },
     );
   }
+
 }

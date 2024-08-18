@@ -18,38 +18,34 @@ class _DashboardState extends State<Dashboard> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Spend Pattern",
-                style: GoogleFonts.lato(
-                    fontSize: 24, fontWeight: FontWeight.bold),
+      body: Consumer<ExpenseProvider>(
+        builder: (context, expenseProvider, child) {
+          final categories = expenseProvider.getExpenseCategoriesWithData();
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Spend Pattern",
+                    style: GoogleFonts.lato(
+                        fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  ...categories.map((categoryData) => _buildExpenseCard(
+                    height,
+                    icon: categoryData.icon,
+                    category: categoryData.category,
+                    transactions: categoryData.transactions.toString(),
+                    totalValue: categoryData.totalValue,
+                  )).toList(),
+                ],
               ),
-              const SizedBox(height: 20),
-              // First Expense Card
-              _buildExpenseCard(
-                height,
-                icon: Icons.food_bank_rounded,
-                category: "Food",
-                transactions: "01",
-                totalValue: "₹9,192.85",
-              ),
-              const SizedBox(height: 20),
-              // Second Expense Card
-              _buildExpenseCard(
-                height,
-                icon: Iconsax.wallet_2,
-                category: "Wallet and Digital Payment",
-                transactions: "05",
-                totalValue: "₹9,159.00",
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -59,10 +55,11 @@ class _DashboardState extends State<Dashboard> {
         required IconData icon,
         required String category,
         required String transactions,
-        required String totalValue,
+        required double totalValue,
       }) {
     return Container(
       width: double.infinity,
+      margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: const Color(0xFF292B4D),
@@ -75,14 +72,13 @@ class _DashboardState extends State<Dashboard> {
             children: [
               Icon(icon, size: 50, color: Colors.white),
               const SizedBox(width: 10),
-              Container(
-                width: MediaQuery.of(context).size.width-140,
+              Expanded(
                 child: Text(
                   category,
                   style: GoogleFonts.lato(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -124,7 +120,7 @@ class _DashboardState extends State<Dashboard> {
                         color: Colors.white70),
                   ),
                   Text(
-                    totalValue,
+                    totalValue.toString(),
                     style: GoogleFonts.lato(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

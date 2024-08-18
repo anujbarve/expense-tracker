@@ -10,6 +10,7 @@ void main() {
 
   late Directory tempDir;
   late Box<Expense> expenseBox;
+  late ExpenseProvider expenseProvider;
 
   setUpAll(() async {
     tempDir = await Directory.systemTemp.createTemp();
@@ -17,6 +18,7 @@ void main() {
 
     Hive.registerAdapter(ExpenseAdapter());
     expenseBox = await Hive.openBox<Expense>('expenses');
+    expenseProvider = ExpenseProvider();
   });
 
   tearDownAll(() async {
@@ -28,15 +30,73 @@ void main() {
     await Hive.close();
   });
 
-  test('Should add an expense to the provider', () async {
-    final expenseProvider = ExpenseProvider();
-    final expense = Expense(id: '1', name: "Name",description: 'Test', amount: 100, date: DateTime.now(), category: '');
+  test('Should initialize the provider with an empty expense box', () async {
+    expect(expenseProvider.expenses, isEmpty);
+  });
 
-    expenseProvider.addExpense(expense);
+  test('Should add an expense to the provider', () async {
+    final expense = Expense(id: '1', name: "Name", description: 'Test', amount: 100, date: DateTime.now(), category: '');
+
+    await expenseProvider.addExpense(expense);
 
     expect(expenseBox.length, 1);
     expect(expenseBox.get('1')?.description, 'Test');
     expect(expenseProvider.expenses.length, 1);
     expect(expenseProvider.expenses.first.description, 'Test');
+  });
+
+  test('Should delete an expense from the provider', () async {
+    final expense = Expense(id: '2', name: "Name2", description: 'Test2', amount: 200, date: DateTime.now(), category: '');
+
+    await expenseProvider.addExpense(expense);
+    await expenseProvider.deleteExpense('2');
+
+    expect(expenseBox.length, 1);  // Only one expense should be present
+    expect(expenseBox.get('2'), isNull);  // Expense should be deleted
+    expect(expenseProvider.expenses, isEmpty);  // Provider should reflect the change
+  });
+
+  test('Should handle sorting by amount', () async {
+    final expense1 = Expense(id: '1', name: "Name1", description: 'Test1', amount: 100, date: DateTime.now(), category: '');
+    final expense2 = Expense(id: '2', name: "Name2", description: 'Test2', amount: 200, date: DateTime.now(), category: '');
+
+    await expenseProvider.addExpense(expense1);
+    await expenseProvider.addExpense(expense2);
+
+    // Test sorting by amount
+    final sortedExpenses = expenseProvider.expenses;
+
+    expect(sortedExpenses.first.amount, 100);  // First item should be the one with the smallest amount
+    expect(sortedExpenses.last.amount, 200);   // Last item should be the one with the largest amount
+  });
+
+  test('Should handle sorting by week', () async {
+    final now = DateTime.now();
+    final expense1 = Expense(id: '1', name: "Name1", description: 'Test1', amount: 100, date: now.subtract(Duration(days: 6)), category: '');
+    final expense2 = Expense(id: '2', name: "Name2", description: 'Test2', amount: 200, date: now.subtract(Duration(days: 13)), category: '');
+
+    await expenseProvider.addExpense(expense1);
+    await expenseProvider.addExpense(expense2);
+
+    // Test sorting by week
+    final weeklyExpenses = expenseProvider.weeklyExpenses;
+
+    expect(weeklyExpenses.length, 1);  // Only the expense within the current week should be present
+    expect(weeklyExpenses.first.id, '1');  // The expense within the current week should be the one with ID '1'
+  });
+
+  test('Should handle sorting by month', () async {
+    final now = DateTime.now();
+    final expense1 = Expense(id: '1', name: "Name1", description: 'Test1', amount: 100, date: now.subtract(Duration(days: 5)), category: '');
+    final expense2 = Expense(id: '2', name: "Name2", description: 'Test2', amount: 200, date: now.subtract(Duration(days: 35)), category: '');
+
+    await expenseProvider.addExpense(expense1);
+    await expenseProvider.addExpense(expense2);
+
+    // Test sorting by month
+    final monthlyExpenses = expenseProvider.monthlyExpenses;
+
+    expect(monthlyExpenses.length, 1);  // Only the expense within the current month should be present
+    expect(monthlyExpenses.first.id, '1');  // The expense within the current month should be the one with ID '1'
   });
 }

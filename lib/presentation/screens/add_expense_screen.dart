@@ -117,144 +117,156 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final fillColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
     final borderColor = isDarkMode ? Colors.grey[600]! : Colors.grey[400]!;
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
-        title: Text(
-          'Add New Expense',
-          style: isDarkMode ? TextStyle(color: Colors.white) : TextStyle(color: Colors.black),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _nameController,
-              style: TextStyle(color: textColor),
-              decoration: InputDecoration(
-                labelText: 'Name',
-                labelStyle: TextStyle(color: labelColor),
-                filled: true,
-                fillColor: fillColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-              ),
+    return Consumer<SettingsProvider>(
+      builder: (BuildContext context, SettingsProvider settingsProvider, Widget? child) {
+        return Scaffold(
+          backgroundColor: backgroundColor,
+          appBar: AppBar(
+            backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
+            title: Text(
+              'Add New Expense',
+              style: isDarkMode
+                  ? TextStyle(color: Colors.white)
+                  : TextStyle(color: Colors.black),
             ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: _descriptionController,
-              style: TextStyle(color: textColor),
-              decoration: InputDecoration(
-                labelText: 'Description',
-                labelStyle: TextStyle(color: labelColor),
-                filled: true,
-                fillColor: fillColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: _amountController,
-              style: TextStyle(color: textColor),
-              decoration: InputDecoration(
-                labelText: 'Amount',
-                labelStyle: TextStyle(color: labelColor),
-                filled: true,
-                fillColor: fillColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-              ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            ),
-            const SizedBox(height: 20),
-            Row(
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    _selectedDateTime == null
-                        ? 'No Date and Time Chosen!'
-                        : 'Picked Date and Time: ${_selectedDateTime!.toLocal()}',
-                    style: TextStyle(color: textColor),
+                TextField(
+                  controller: _nameController,
+                  style: TextStyle(color: textColor),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    labelStyle: TextStyle(color: labelColor),
+                    filled: true,
+                    fillColor: fillColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide(color: borderColor),
+                    ),
                   ),
                 ),
-                TextButton(
-                  onPressed: _presentDatePicker,
-                  child: Text(
-                    'Choose Date & Time',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : const Color(0xFF292B4D),),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _descriptionController,
+                  style: TextStyle(color: textColor),
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: TextStyle(color: labelColor),
+                    filled: true,
+                    fillColor: fillColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide(color: borderColor),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _amountController,
+                  style: TextStyle(color: textColor),
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
+                    labelStyle: TextStyle(color: labelColor),
+                    filled: true,
+                    fillColor: fillColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide(color: borderColor),
+                    ),
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedDateTime == null
+                            ? 'No Date and Time Chosen!'
+                            : 'Picked Date and Time: ${_selectedDateTime!.toLocal()}',
+                        style: TextStyle(color: textColor),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _presentDatePicker,
+                      child: Text(
+                        'Choose Date & Time',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF292B4D),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  dropdownColor: fillColor,
+                  value: _selectedCategory,
+                  hint: Text('Choose Category',
+                      style: TextStyle(color: labelColor)),
+                  items: settingsProvider.expenseCategories.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(category, style: TextStyle(color: textColor)),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedCategory = newValue;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: fillColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide(color: borderColor),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _submitData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF292B4D),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Add Expense',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              dropdownColor: fillColor,
-              value: _selectedCategory,
-              hint: Text('Choose Category', style: TextStyle(color: labelColor)),
-              items: _categories.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Text(category, style: TextStyle(color: textColor)),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedCategory = newValue;
-                });
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: fillColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitData,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF292B4D),
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                ),
-                child: const Text(
-                  'Add Expense',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

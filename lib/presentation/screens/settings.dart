@@ -1,4 +1,5 @@
 import 'package:finance/domain/provider/settings_provider.dart';
+import 'package:finance/presentation/screens/add_expense_category.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,8 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings', style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold)),
+        title: Text('Settings',
+            style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -17,48 +19,38 @@ class SettingsScreen extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           children: [
-            _buildSettingsOption(
-              context,
-              Icons.credit_card,
-              'Manage Accounts',
-              'Manage your bank accounts, credit cards, and wallets',
-                  () {},
-            ),
-            _buildSettingsOption(
-              context,
-              Icons.attach_money,
-              'Currency Settings',
-              'Set your default currency and exchange rates',
-                  () {},
-            ),
-            _buildSettingsOption(
-              context,
-              Icons.category,
-              'Expense Categories',
-              'Customize or add expense categories',
-                  () {},
+
+
+            GestureDetector(
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AddCategoryScreen()));
+              },
+              child: _buildSettingsOption(
+                context,
+                Icons.category,
+                'Expense Categories',
+                'Customize or add expense categories',
+                    () {
+
+                },
+              ),
             ),
             _buildSettingsOption(
               context,
               Icons.notifications,
               'Budget Alerts',
               'Set alerts when nearing your budget limits',
-                  () {},
-            ),
-            _buildSettingsOption(
-              context,
-              Icons.security,
-              'Security Settings',
-              'Set up PIN, fingerprint, or face recognition for security',
-                  () {},
+              () {},
             ),
             _buildSettingsOption(
               context,
               Icons.dark_mode,
               'Dark Mode',
               'Toggle between light and dark modes',
-                  () {
-                final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+              () {
+                final settingsProvider =
+                    Provider.of<SettingsProvider>(context, listen: false);
                 final currentDarkMode = settingsProvider.darkMode;
                 settingsProvider.setDarkMode(!currentDarkMode);
               },
@@ -66,17 +58,10 @@ class SettingsScreen extends StatelessWidget {
             ),
             _buildSettingsOption(
               context,
-              Icons.notifications_active,
-              'Notifications',
-              'Manage your notification preferences',
-                  () {},
-            ),
-            _buildSettingsOption(
-              context,
               Icons.privacy_tip,
               'Privacy Policy',
               'Read our privacy policy',
-                  () {},
+              () {},
             ),
           ],
         ),
@@ -85,13 +70,13 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildSettingsOption(
-      BuildContext context,
-      IconData icon,
-      String title,
-      String subtitle,
-      VoidCallback callback, {
-        bool isSwitch = false,
-      }) {
+    BuildContext context,
+    IconData icon,
+    String title,
+    String subtitle,
+    VoidCallback callback, {
+    bool isSwitch = false,
+  }) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -106,7 +91,10 @@ class SettingsScreen extends StatelessWidget {
             Spacer(),
             Text(
               title,
-              style: GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              style: GoogleFonts.lato(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
             Text(
               subtitle,
@@ -116,7 +104,8 @@ class SettingsScreen extends StatelessWidget {
               Switch(
                 value: Provider.of<SettingsProvider>(context).darkMode,
                 onChanged: (value) {
-                  final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                  final settingsProvider =
+                      Provider.of<SettingsProvider>(context, listen: false);
                   settingsProvider.setDarkMode(value);
                 },
               ),
