@@ -1,11 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart'; // Import this for date formatting
 
 import '../../data/models/expense_model.dart';
 
 class ExpenseProvider with ChangeNotifier {
-  final Box<Expense> _expenseBox = Hive.box<Expense>('expenses');
+  late Box<Expense> _expenseBox;
+  bool _isInitialized = false;
+
+  bool get isInitialized => _isInitialized;
+
+
+  ExpenseProvider() {
+    _initializeBox();
+  }
+
+  Future<void> _initializeBox() async {
+    _expenseBox = await Hive.openBox<Expense>('expenses');
+    _isInitialized = true;
+    notifyListeners();
+  }
 
   List<Expense> get expenses {
     return _expenseBox.values.toList();
@@ -26,7 +39,7 @@ class ExpenseProvider with ChangeNotifier {
 
     return _expenseBox.values.where((expense) {
       final expenseDate = expense.date.toLocal();
-      return expenseDate.isAfter(startOfWeek) && expenseDate.isBefore(endOfWeek);
+      return expenseDate.isAfter(startOfWeek) && expenseDate.isBefore(endOfWeek.add(Duration(days: 1)));
     }).toList();
   }
 
@@ -38,7 +51,7 @@ class ExpenseProvider with ChangeNotifier {
 
     return _expenseBox.values.where((expense) {
       final expenseDate = expense.date.toLocal();
-      return expenseDate.isAfter(startOfMonth) && expenseDate.isBefore(endOfMonth);
+      return expenseDate.isAfter(startOfMonth.subtract(Duration(days: 1))) && expenseDate.isBefore(endOfMonth.add(Duration(days: 1)));
     }).toList();
   }
 
@@ -49,18 +62,40 @@ class ExpenseProvider with ChangeNotifier {
     }).toList();
   }
 
-  void addExpense(Expense expense) {
-    _expenseBox.put(expense.id, expense);
-    notifyListeners();
+  // Get expenses by category
+  List<Expense> getExpensesByCategory(String category) {
+    return _expenseBox.values.where((expense) {
+      return expense.category.toLowerCase() == category.toLowerCase();
+    }).toList();
   }
 
-  void deleteExpense(String id) {
-    _expenseBox.delete(id);
-    notifyListeners();
+  Future<void> addExpense(Expense expense) async {
+    try {
+      await _expenseBox.put(expense.id, expense);
+      notifyListeners();
+    } catch (e) {
+      // Handle errors (e.g., show a message to the user)
+      print("Error adding expense: $e");
+    }
   }
 
-  void updateExpense(String id, Expense updatedExpense) {
-    _expenseBox.put(id, updatedExpense);
-    notifyListeners();
+  Future<void> deleteExpense(String id) async {
+    try {
+      await _expenseBox.delete(id);
+      notifyListeners();
+    } catch (e) {
+      // Handle errors (e.g., show a message to the user)
+      print("Error deleting expense: $e");
+    }
+  }
+
+  Future<void> updateExpense(String id, Expense updatedExpense) async {
+    try {
+      await _expenseBox.put(id, updatedExpense);
+      notifyListeners();
+    } catch (e) {
+      // Handle errors (e.g., show a message to the user)
+      print("Error updating expense: $e");
+    }
   }
 }

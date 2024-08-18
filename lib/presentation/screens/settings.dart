@@ -1,85 +1,125 @@
+import 'package:finance/domain/provider/settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings', style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          itemCount: 8, // Number of settings options
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Two items per row
-            childAspectRatio: 1, // Square items
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-          ),
-          itemBuilder: (context, index) {
-            return _buildSettingsCard(index);
-          },
+        child: GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          children: [
+            _buildSettingsOption(
+              context,
+              Icons.credit_card,
+              'Manage Accounts',
+              'Manage your bank accounts, credit cards, and wallets',
+                  () {},
+            ),
+            _buildSettingsOption(
+              context,
+              Icons.attach_money,
+              'Currency Settings',
+              'Set your default currency and exchange rates',
+                  () {},
+            ),
+            _buildSettingsOption(
+              context,
+              Icons.category,
+              'Expense Categories',
+              'Customize or add expense categories',
+                  () {},
+            ),
+            _buildSettingsOption(
+              context,
+              Icons.notifications,
+              'Budget Alerts',
+              'Set alerts when nearing your budget limits',
+                  () {},
+            ),
+            _buildSettingsOption(
+              context,
+              Icons.security,
+              'Security Settings',
+              'Set up PIN, fingerprint, or face recognition for security',
+                  () {},
+            ),
+            _buildSettingsOption(
+              context,
+              Icons.dark_mode,
+              'Dark Mode',
+              'Toggle between light and dark modes',
+                  () {
+                final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                final currentDarkMode = settingsProvider.darkMode;
+                settingsProvider.setDarkMode(!currentDarkMode);
+              },
+              isSwitch: true,
+            ),
+            _buildSettingsOption(
+              context,
+              Icons.notifications_active,
+              'Notifications',
+              'Manage your notification preferences',
+                  () {},
+            ),
+            _buildSettingsOption(
+              context,
+              Icons.privacy_tip,
+              'Privacy Policy',
+              'Read our privacy policy',
+                  () {},
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSettingsCard(int index) {
-    // Define the icons and labels based on the index
-    final List<IconData> icons = [
-      Iconsax.award, // explore rewards
-      Iconsax.user_tag, // refer now & earn gems
-      Iconsax.wallet, // credit cards
-      Iconsax.coin, // coins
-      Iconsax.bill, // gems
-      Iconsax.moon, // support
-      Iconsax.support, // support
-      Iconsax.gift, // claimed rewards
-    ];
-
-    final List<String> labels = [
-      'explore\nrewards',
-      'refer now\n& earn gems',
-      '2\ncredit cards',
-      '5,05,143\ncoins',
-      '5\ngems',
-      'support',
-      'Dark Mode',
-      '14\nclaimed rewards',
-    ];
-
+  Widget _buildSettingsOption(
+      BuildContext context,
+      IconData icon,
+      String title,
+      String subtitle,
+      VoidCallback callback, {
+        bool isSwitch = false,
+      }) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF292B4D), // Card color matching the UI
         borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFF292B4D),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (index == 0)
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text('3 new',
-                      style: GoogleFonts.lato(fontSize: 12, color: Colors.white)),
-                ),
-              ),
-            const Spacer(),
-            Icon(icons[index], color: Colors.white, size: 40),
-            const SizedBox(height: 10),
+            Icon(icon, color: Colors.white, size: 28),
+            Spacer(),
             Text(
-              labels[index],
-              style: GoogleFonts.lato(fontSize: 16, color: Colors.white),
+              title,
+              style: GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
             ),
+            Text(
+              subtitle,
+              style: GoogleFonts.lato(fontSize: 12, color: Colors.white70),
+            ),
+            if (isSwitch)
+              Switch(
+                value: Provider.of<SettingsProvider>(context).darkMode,
+                onChanged: (value) {
+                  final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                  settingsProvider.setDarkMode(value);
+                },
+              ),
           ],
         ),
       ),

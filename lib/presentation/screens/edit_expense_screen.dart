@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/models/expense_model.dart';
 import '../../domain/provider/expense_provider.dart';
+import '../../domain/provider/settings_provider.dart';
 
 class EditExpenseScreen extends StatefulWidget {
   final String expenseId;
@@ -26,13 +27,12 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
     'Entertainment',
     'Health',
     'Other'
-  ]; // Example categories
+  ];
 
   @override
   void initState() {
     super.initState();
 
-    // Fetch the expense using the provided ID and prefill the form fields
     final expense = Provider.of<ExpenseProvider>(context, listen: false)
         .expenses
         .firstWhere((expense) => expense.id == widget.expenseId);
@@ -62,7 +62,7 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
       description: enteredDescription,
       amount: enteredAmount,
       date: _selectedDateTime!,
-      category: _selectedCategory!, // Include category
+      category: _selectedCategory!,
     );
 
     Provider.of<ExpenseProvider>(context, listen: false)
@@ -76,12 +76,40 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
       initialDate: _selectedDateTime ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.blueAccent,
+              onPrimary: Colors.black,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            dialogBackgroundColor: Colors.white,
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (pickedDate != null) {
       final pickedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Colors.blueAccent,
+                onPrimary: Colors.black,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child!,
+          );
+        },
       );
 
       if (pickedTime != null) {
@@ -100,29 +128,79 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+    final isDarkMode = settingsProvider.darkMode;
+
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        title: Text('Edit Expense'),
+        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
+        title: Text(
+          'Edit Expense',
+          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+        ),
+        iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Name'),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Name',
+                labelStyle: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[700]),
+                filled: true,
+                fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!),
+                ),
+              ),
             ),
+            const SizedBox(height: 15),
             TextField(
               controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Description',
+                labelStyle: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[700]),
+                filled: true,
+                fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!),
+                ),
+              ),
             ),
+            const SizedBox(height: 15),
             TextField(
               controller: _amountController,
-              decoration: InputDecoration(labelText: 'Amount'),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Amount',
+                labelStyle: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[700]),
+                filled: true,
+                fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!),
+                ),
+              ),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
@@ -130,26 +208,29 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
                     _selectedDateTime == null
                         ? 'No Date and Time Chosen!'
                         : 'Picked Date and Time: ${_selectedDateTime!.toLocal()}',
+                    style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
                   ),
                 ),
                 TextButton(
                   onPressed: _presentDatePicker,
-                  child: Text(
+                  child: const Text(
                     'Choose Date & Time',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            DropdownButton<String>(
-              isExpanded: true,
+            const SizedBox(height: 20),
+            DropdownButtonFormField<String>(
+              dropdownColor: isDarkMode ? Colors.grey[800] : Colors.grey[300],
               value: _selectedCategory,
-              hint: Text('Choose Category'),
+              hint: Text('Choose Category', style: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[700])),
               items: _categories.map((category) {
                 return DropdownMenuItem(
                   value: category,
-                  child: Text(category),
+                  child: Text(category, style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
                 );
               }).toList(),
               onChanged: (newValue) {
@@ -157,11 +238,34 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
                   _selectedCategory = newValue;
                 });
               },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Colors.grey[400]!),
+                ),
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitData,
-              child: Text('Update Expense'),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                onPressed: _submitData,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
+                child: const Text(
+                  'Update Expense',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
             ),
           ],
         ),
