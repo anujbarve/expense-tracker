@@ -40,7 +40,7 @@ class NotificationService {
       'Time to check your finances!',
       scheduledDate,
       platformChannelSpecifics,
-      androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time, // Ensures it repeats daily at the same time
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
     );
